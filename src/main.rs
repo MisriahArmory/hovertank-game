@@ -1,10 +1,9 @@
 use bevy::prelude::*;
 use hovertank_game::{
-    commands::{setup, setup_menu},
+    commands::setup,
     events::log_transition::log_transitions,
-    plugins::splash::splash_plugin,
+    plugins::{menu::menu_plugin, splash::splash_plugin},
     states::app::AppState,
-    systems::menu::menu,
 };
 
 fn main() {
@@ -12,9 +11,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .init_state::<AppState>()
         .add_systems(Startup, setup)
-        .add_plugins(splash_plugin)
         .add_systems(Update, log_transitions)
-        .add_systems(OnEnter(AppState::MainMenu), setup_menu)
-        .add_systems(Update, menu.run_if(in_state(AppState::MainMenu)))
+        .add_plugins((splash_plugin, menu_plugin))
         .run();
 }
