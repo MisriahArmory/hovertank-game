@@ -7,6 +7,7 @@ use crate::{
 };
 
 pub fn setup_main_menu(mut commands: Commands) {
+    commands.spawn((Camera2dBundle::default(), OnMainMenu));
     commands
         .spawn((
             NodeBundle {

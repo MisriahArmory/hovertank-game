@@ -4,6 +4,7 @@ use crate::{
     components::loading::OnLoading, resources::timer::LoadingTimer, states::app::AppState,
 };
 pub fn setup_loading(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn((Camera2dBundle::default(), OnLoading));
     let icon = asset_server.load("branding/icon.png");
     commands
         .spawn((

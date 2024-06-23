@@ -1,12 +1,9 @@
+pub mod in_game;
 pub mod loading;
 pub mod main_menu;
 pub mod splash;
 
 use bevy::prelude::*;
-
-pub fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
-}
 
 pub fn despawn_with_component<T: Component>(
     to_despawn: Query<Entity, With<T>>,

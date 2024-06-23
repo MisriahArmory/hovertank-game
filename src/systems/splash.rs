@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use crate::{components::splash::OnSplash, resources::timer::SplashTimer, states::app::AppState};
 
 pub fn setup_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn((Camera2dBundle::default(), OnSplash));
     let icon = asset_server.load("branding/icon.png");
     commands
         .spawn((
