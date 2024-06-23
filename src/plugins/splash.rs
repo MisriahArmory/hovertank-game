@@ -1,10 +1,12 @@
 use bevy::prelude::*;
 
 use crate::{
-    commands::splash::setup_splash,
     components::splash::OnSplash,
     states::app::AppState,
-    systems::{despawn_with_component, splash::splash},
+    systems::{
+        despawn_with_component,
+        splash::{setup_splash, splash},
+    },
 };
 
 pub fn splash_plugin(app: &mut App) {

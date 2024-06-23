@@ -1,8 +1,12 @@
 use bevy::prelude::*;
 
-use crate::{components::menu::OnMainMenu, constants::menu::NORMAL_BUTTON};
+use crate::{
+    components::menu::OnMainMenu,
+    constants::menu::{HOVERED_BUTTON, NORMAL_BUTTON, PRESSED_BUTTON},
+    states::app::AppState,
+};
 
-pub fn setup_menu(mut commands: Commands) {
+pub fn setup_main_menu(mut commands: Commands) {
     commands
         .spawn((
             NodeBundle {
@@ -41,4 +45,27 @@ pub fn setup_menu(mut commands: Commands) {
                     ));
                 });
         });
+}
+
+pub fn main_menu(
+    mut next_state: ResMut<NextState<AppState>>,
+    mut interaction_query: Query<
+        (&Interaction, &mut BackgroundColor),
+        (Changed<Interaction>, With<Button>),
+    >,
+) {
+    for (interaction, mut color) in &mut interaction_query {
+        match *interaction {
+            Interaction::Pressed => {
+                *color = PRESSED_BUTTON.into();
+                next_state.set(AppState::Loading);
+            }
+            Interaction::Hovered => {
+                *color = HOVERED_BUTTON.into();
+            }
+            Interaction::None => {
+                *color = NORMAL_BUTTON.into();
+            }
+        }
+    }
 }
