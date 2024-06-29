@@ -1,6 +1,11 @@
 use bevy::prelude::*;
+use leafwing_input_manager::prelude::*;
 
-use crate::components::in_game::InGame;
+use crate::{
+    bundles::local_player::LocalPlayerBundle,
+    components::{InGame, LocalPlayer},
+    key_mappings::movement_key_mapping::MoveAction,
+};
 
 pub fn setup_in_game(
     mut commands: Commands,
@@ -39,16 +44,18 @@ pub fn setup_in_game(
         InGame,
     ));
 
-    // Cube
-    commands.spawn((
-        PbrBundle {
+    // Player
+    commands.spawn(LocalPlayerBundle {
+        local_player: LocalPlayer,
+        in_game: InGame,
+        player_model: PbrBundle {
             mesh: meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
             material: materials.add(Color::rgb(0.8, 0.7, 0.6)),
             transform: Transform::from_xyz(0.0, 0.5, 0.0),
             ..default()
         },
-        InGame,
-    ));
+        input_manager: InputManagerBundle::with_map(MoveAction::default_mapping()),
+    });
 }
 
 pub fn in_game() {}
