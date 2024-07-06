@@ -3,7 +3,7 @@ use leafwing_input_manager::prelude::*;
 
 use crate::{
     bundles::local_player::LocalPlayerBundle,
-    components::{InGame, LocalPlayer},
+    components::{InGame, LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
     key_mappings::movement_key_mapping::MoveAction,
 };
 
@@ -12,15 +12,6 @@ pub fn setup_in_game(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    // Camera
-    commands.spawn((
-        Camera3dBundle {
-            transform: Transform::from_xyz(0.0, 1.5, 6.0).looking_at(Vec3::ZERO, Vec3::Y),
-            ..default()
-        },
-        InGame,
-    ));
-
     // Light
     commands.spawn((
         PointLightBundle {
@@ -38,7 +29,7 @@ pub fn setup_in_game(
     commands.spawn((
         PbrBundle {
             mesh: meshes.add(Plane3d::default().mesh().size(100.0, 100.0)),
-            material: materials.add(Color::rgb(0.3, 0.5, 0.3)),
+            material: materials.add(Color::srgb(0.3, 0.5, 0.3)),
             ..default()
         },
         InGame,
@@ -50,12 +41,23 @@ pub fn setup_in_game(
         in_game: InGame,
         player_model: PbrBundle {
             mesh: meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
-            material: materials.add(Color::rgb(0.8, 0.7, 0.6)),
+            material: materials.add(Color::srgb(0.8, 0.7, 0.6)),
             transform: Transform::from_xyz(0.0, 0.5, 0.0),
             ..default()
         },
         input_manager: InputManagerBundle::with_map(MoveAction::default_mapping()),
+        third_person_camera_focus: ThirdPersonCameraFocus,
     });
+
+    // Camera
+    commands.spawn((
+        Camera3dBundle {
+            transform: Transform::from_xyz(0.0, 1.5, 6.0).looking_at(Vec3::ZERO, Vec3::Y),
+            ..default()
+        },
+        LocalPlayer,
+        ThirdPersonCamera,
+    ));
 }
 
 pub fn in_game() {}
