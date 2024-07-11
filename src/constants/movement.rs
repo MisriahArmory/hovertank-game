@@ -1,1 +1,1 @@
-pub const MOVEMENT_SPEED: f32 = 5.0;
+pub const MOVEMENT_SPEED: f32 = 2.0;

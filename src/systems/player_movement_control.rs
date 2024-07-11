@@ -2,18 +2,22 @@ use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::{
-    components::{LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
+    components::{HeldMoveActions, LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
     constants::movement::MOVEMENT_SPEED,
     key_mappings::movement_key_mapping::MoveAction,
 };
 
-/// System to handle input controls.  Looks for an entity with an assigned input mapping
-/// and will scan against the controls to determine if the entity should be moved.
-pub fn control(
+/// System to handle moving the player.  Looks for an entity with an assigned input mapping
+/// and will scan the current actions to move the player
+pub fn player_movement_control(
     mut set: ParamSet<(
         Query<&Transform, With<ThirdPersonCamera>>,
         Query<
-            (&mut Transform, &ActionState<MoveAction>),
+            (
+                &mut Transform,
+                &mut HeldMoveActions,
+                &ActionState<MoveAction>,
+            ),
             (With<LocalPlayer>, With<ThirdPersonCameraFocus>),
         >,
     )>,
@@ -32,7 +36,7 @@ pub fn control(
 
     let mut query = set.p1();
 
-    for (mut transform, action) in query.iter_mut() {
+    for (mut transform, mut held_move_actions, action) in query.iter_mut() {
         let mut movement = Vec3::ZERO;
 
         for pressed_action in action.get_pressed() {

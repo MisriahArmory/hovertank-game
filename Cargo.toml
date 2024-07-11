@@ -6,10 +6,18 @@ edition = "2021"
 [dependencies]
 bevy = {version = "^0.14.0", features = ["dynamic_linking", "wayland"]}
 bevy_asset_loader = "^0.21.0"
-leafwing-input-manager = { git = "https://github.com/ChosunOne/leafwing-input-manager", branch = "v0.14-rc"}
+leafwing-input-manager = "0.14.0"
+bevy_diagnostic = "0.14.0"
 
 [profile.dev]
 opt-level = 1
 
 [profile.dev.package."*"]
 opt-level = 3
+
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1
+incremental = false
+debug = false
