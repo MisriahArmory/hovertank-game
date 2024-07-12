@@ -1,3 +1,5 @@
+pub mod camera;
+pub mod control;
 pub mod in_game;
 pub mod loading;
 pub mod main_menu;

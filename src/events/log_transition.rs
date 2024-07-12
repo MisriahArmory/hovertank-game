@@ -6,7 +6,7 @@ pub fn log_transitions(mut transitions: EventReader<StateTransitionEvent<AppStat
     for transition in transitions.read() {
         info!(
             "transition: {:?} => {:?}",
-            transition.before, transition.after
+            transition.exited, transition.entered
         );
     }
 }
