@@ -23,17 +23,20 @@ pub fn camera(
     ) - 4.0 * focus_forward_xz;
     let mut camera_transform_query = set.p0();
     let mut camera_transform = camera_transform_query.single_mut();
-    let direction = camera_transform.translation - camera_target_point;
+    let translation_direction = camera_target_point - camera_transform.translation;
 
-    if direction == Vec3::ZERO {
+    let up = camera_transform.up();
+    camera_transform.look_at(focus_transform.translation + focus_forward_xz * 4.0, up);
+
+    if translation_direction == Vec3::ZERO {
         return;
     }
 
-    let dir_norm = direction.normalize();
-    let dir_mag = direction.length();
+    let trans_dir_norm = translation_direction.normalize();
+    let trans_dir_mag = translation_direction.length();
 
-    if dir_mag > 0.1 {
-        camera_transform.translation -=
-            dir_norm * dir_mag * CAMERA_FOLLOW_SPEED * time.delta_seconds();
+    if trans_dir_mag > 0.1 {
+        camera_transform.translation +=
+            trans_dir_norm * trans_dir_mag * CAMERA_FOLLOW_SPEED * time.delta_seconds();
     }
 }
