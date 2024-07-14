@@ -4,12 +4,12 @@ use leafwing_input_manager::prelude::*;
 use crate::{
     components::{LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
     constants::movement::MOVEMENT_SPEED,
-    key_mappings::movement_key_mapping::MoveAction,
+    key_mappings::movement::MoveAction,
 };
 
 /// System to handle input controls.  Looks for an entity with an assigned input mapping
 /// and will scan against the controls to determine if the entity should be moved.
-pub fn control(
+pub fn movement_control(
     mut set: ParamSet<(
         Query<&Transform, With<ThirdPersonCamera>>,
         Query<

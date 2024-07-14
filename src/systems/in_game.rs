@@ -1,10 +1,8 @@
 use bevy::prelude::*;
-use leafwing_input_manager::prelude::*;
 
 use crate::{
-    bundles::local_player::LocalPlayerBundle,
+    bundles::{input::InputBundle, local_player::LocalPlayerBundle},
     components::{InGame, LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
-    key_mappings::movement_key_mapping::MoveAction,
 };
 
 pub fn setup_in_game(
@@ -45,7 +43,7 @@ pub fn setup_in_game(
             transform: Transform::from_xyz(0.0, 0.5, 0.0),
             ..default()
         },
-        input_manager: InputManagerBundle::with_map(MoveAction::default_mapping()),
+        input: InputBundle::default(),
         third_person_camera_focus: ThirdPersonCameraFocus,
     });
 
