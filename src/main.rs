@@ -4,7 +4,7 @@ use hovertank_game::{
     events::log_transition::log_transitions,
     plugins::{
         in_game::in_game_plugin, loading::loading_plugin, main_menu::main_menu_plugin,
-        splash::splash_plugin,
+        splash::splash_plugin, state::state_plugin,
     },
     states::app::AppState,
 };
@@ -22,6 +22,7 @@ fn main() {
         .init_state::<AppState>()
         .add_systems(Update, log_transitions)
         .add_plugins((
+            state_plugin,
             splash_plugin,
             main_menu_plugin,
             loading_plugin,

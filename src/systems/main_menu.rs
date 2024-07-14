@@ -1,15 +1,15 @@
 use bevy::prelude::*;
 
 use crate::{
-    components::menu::OnMainMenu,
     constants::menu::{HOVERED_BUTTON, NORMAL_BUTTON, PRESSED_BUTTON},
     states::app::AppState,
 };
 
 pub fn setup_main_menu(mut commands: Commands) {
-    commands.spawn((Camera2dBundle::default(), OnMainMenu));
+    commands.spawn((StateScoped(AppState::MainMenu), Camera2dBundle::default()));
     commands
         .spawn((
+            StateScoped(AppState::MainMenu),
             NodeBundle {
                 style: Style {
                     width: Val::Percent(100.0),
@@ -20,7 +20,6 @@ pub fn setup_main_menu(mut commands: Commands) {
                 },
                 ..default()
             },
-            OnMainMenu,
         ))
         .with_children(|parent| {
             parent

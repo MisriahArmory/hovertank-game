@@ -6,7 +6,6 @@ use crate::{
 };
 
 pub fn loading_plugin(app: &mut App) {
-    app.enable_state_scoped_entities::<AppState>()
-        .add_systems(OnEnter(AppState::Loading), setup_loading)
+    app.add_systems(OnEnter(AppState::Loading), setup_loading)
         .add_systems(Update, loading.run_if(in_state(AppState::Loading)));
 }

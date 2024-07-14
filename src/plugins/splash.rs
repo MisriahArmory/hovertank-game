@@ -6,7 +6,6 @@ use crate::{
 };
 
 pub fn splash_plugin(app: &mut App) {
-    app.enable_state_scoped_entities::<AppState>()
-        .add_systems(OnEnter(AppState::Splash), setup_splash)
+    app.add_systems(OnEnter(AppState::Splash), setup_splash)
         .add_systems(Update, splash.run_if(in_state(AppState::Splash)));
 }
