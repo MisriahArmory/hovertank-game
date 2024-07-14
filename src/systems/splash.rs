@@ -1,12 +1,13 @@
 use bevy::prelude::*;
 
-use crate::{components::splash::OnSplash, resources::timer::SplashTimer, states::app::AppState};
+use crate::{resources::timer::SplashTimer, states::app::AppState};
 
 pub fn setup_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn((Camera2dBundle::default(), OnSplash));
+    commands.spawn((StateScoped(AppState::Splash), Camera2dBundle::default()));
     let icon = asset_server.load("branding/icon.png");
     commands
         .spawn((
+            StateScoped(AppState::Splash),
             NodeBundle {
                 style: Style {
                     align_items: AlignItems::Center,
@@ -17,7 +18,6 @@ pub fn setup_splash(mut commands: Commands, asset_server: Res<AssetServer>) {
                 },
                 ..default()
             },
-            OnSplash,
         ))
         .with_children(|parent| {
             parent.spawn(ImageBundle {

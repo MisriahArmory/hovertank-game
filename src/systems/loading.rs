@@ -1,13 +1,12 @@
 use bevy::prelude::*;
 
-use crate::{
-    components::loading::OnLoading, resources::timer::LoadingTimer, states::app::AppState,
-};
+use crate::{resources::timer::LoadingTimer, states::app::AppState};
 pub fn setup_loading(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn((Camera2dBundle::default(), OnLoading));
+    commands.spawn((StateScoped(AppState::Loading), Camera2dBundle::default()));
     let icon = asset_server.load("branding/icon.png");
     commands
         .spawn((
+            StateScoped(AppState::Loading),
             NodeBundle {
                 style: Style {
                     align_items: AlignItems::Center,
@@ -18,7 +17,6 @@ pub fn setup_loading(mut commands: Commands, asset_server: Res<AssetServer>) {
                 },
                 ..default()
             },
-            OnLoading,
         ))
         .with_children(|parent| {
             parent.spawn(ImageBundle {
