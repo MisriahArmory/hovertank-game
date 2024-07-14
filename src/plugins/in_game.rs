@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    plugins::control::control_plugin,
-    states::{app::AppState, in_game::InGame as InGameState},
+    states::{app::AppState, in_game::InGame},
     systems::{
         camera::camera,
         cursor::{grab_cursor, release_cursor},
@@ -14,16 +13,13 @@ use crate::{
 pub fn in_game_plugin(app: &mut App) {
     app.add_systems(OnEnter(AppState::InGame), setup_in_game)
         .add_systems(
-            OnEnter(InGameState::MenuOpen),
+            OnEnter(InGame::MenuOpen),
             (setup_in_game_menu, release_cursor),
         )
         .add_systems(
             Update,
-            (in_game, toggle_in_game_menu).run_if(in_state(AppState::InGame)),
+            (in_game, camera, toggle_in_game_menu).run_if(in_state(AppState::InGame)),
         )
-        .add_systems(
-            Update,
-            (grab_cursor, camera).run_if(in_state(InGameState::Running)),
-        )
-        .add_plugins(control_plugin);
+        .add_systems(Update, grab_cursor.run_if(in_state(InGame::Running)))
+        .add_systems(OnExit(AppState::InGame), release_cursor);
 }
