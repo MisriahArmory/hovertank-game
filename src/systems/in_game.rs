@@ -54,7 +54,7 @@ pub fn setup_in_game(
     commands.spawn((
         StateScoped(AppState::InGame),
         Camera3dBundle {
-            transform: Transform::from_xyz(0.0, 1.5, 6.0).looking_at(Vec3::ZERO, Vec3::Y),
+            transform: Transform::from_xyz(0.0, 1.5, 6.0),
             ..default()
         },
         LocalPlayer,

@@ -7,14 +7,15 @@ use crate::{
     },
 };
 
-pub fn camera(
+pub fn camera_follow_focus(
     mut set: ParamSet<(
         Query<&mut Transform, With<ThirdPersonCamera>>,
         Query<&Transform, With<ThirdPersonCameraFocus>>,
     )>,
     time: Res<Time>,
 ) {
-    let focus_transform = *set.p1().single();
+    let focus_transform = *set.p1().single_mut();
+
     let focus_forward = focus_transform.forward();
     let focus_forward_xz = Vec3::new(focus_forward.x, 0.0, focus_forward.z);
     let focus_forward_xz = if focus_forward_xz.length_squared() > 0.0 {
@@ -31,14 +32,6 @@ pub fn camera(
     let mut camera_transform_query = set.p0();
     let mut camera_transform = camera_transform_query.single_mut();
     let translation_direction = camera_target_point - camera_transform.translation;
-
-    let forward_rotation = Quat::from_rotation_arc(-Vec3::Z, focus_forward_xz);
-    let pitch_rotation = Quat::from_axis_angle(Vec3::X, -0.1);
-    let target_rotation = forward_rotation * pitch_rotation;
-
-    camera_transform.rotation = camera_transform
-        .rotation
-        .slerp(target_rotation, time.delta_seconds());
 
     if translation_direction == Vec3::ZERO {
         return;
