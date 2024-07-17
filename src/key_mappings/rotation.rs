@@ -21,7 +21,7 @@ impl RotationAction {
                     positive_low: 0.1,
                     negative_low: -0.1,
                     inverted: false,
-                    sensitivity: 1.0,
+                    sensitivity: 0.05,
                     value: None,
                 },
                 y: SingleAxis {
@@ -29,12 +29,12 @@ impl RotationAction {
                     positive_low: 0.1,
                     negative_low: -0.1,
                     inverted: false,
-                    sensitivity: 1.0,
+                    sensitivity: 0.05,
                     value: None,
                 },
                 deadzone: DeadZoneShape::Ellipse {
-                    radius_x: 1.0,
-                    radius_y: 1.0,
+                    radius_x: 0.1,
+                    radius_y: 0.1,
                 },
             },
         );
