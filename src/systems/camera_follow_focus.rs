@@ -3,8 +3,10 @@ use bevy::prelude::*;
 use crate::{
     components::{ThirdPersonCamera, ThirdPersonCameraFocus},
     constants::camera::{
-        CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_SPEED, CAMERA_TRANS_EPS,
+        CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_ROTATION_SPEED,
+        CAMERA_FOLLOW_SPEED,
     },
+    traits::Project,
 };
 
 pub fn camera_follow_focus(
@@ -15,33 +17,37 @@ pub fn camera_follow_focus(
     time: Res<Time>,
 ) {
     let focus_transform = *set.p1().single_mut();
+    let mut camera_transform_query = set.p0();
+    let mut camera_transform = camera_transform_query.single_mut();
+    let camera_forward = camera_transform.forward();
 
-    let focus_forward = focus_transform.forward();
-    let focus_forward_xz = Vec3::new(focus_forward.x, 0.0, focus_forward.z);
-    let focus_forward_xz = if focus_forward_xz.length_squared() > 0.0 {
-        focus_forward.normalize()
-    } else {
-        -Vec3::Z
-    };
+    let relative_position_direction_xz =
+        (focus_transform.translation - camera_transform.translation).project_normalized(Vec3::Y);
+    let camera_distance = (focus_transform.translation - camera_transform.translation).length();
+
+    let camera_forward_xz = camera_forward.project_normalized(Vec3::Y);
+    let camera_orbit_rotor =
+        -Quat::from_rotation_arc(relative_position_direction_xz, camera_forward_xz);
+    let new_relative_position = camera_orbit_rotor.mul_vec3(relative_position_direction_xz);
+    let target_orbit_point = focus_transform.translation + Vec3::Y * CAMERA_FOLLOW_HEIGHT
+        - new_relative_position * camera_distance;
+
+    let new_translation = camera_transform.translation.lerp(
+        target_orbit_point,
+        CAMERA_FOLLOW_ROTATION_SPEED * time.delta_seconds(),
+    );
+
+    let new_relative_position_direction_xz =
+        (focus_transform.translation - new_translation).project_normalized(Vec3::Y);
 
     let camera_target_point = Vec3::new(
         focus_transform.translation.x,
         CAMERA_FOLLOW_HEIGHT,
         focus_transform.translation.z,
-    ) - CAMERA_FOLLOW_DISTANCE * focus_forward_xz;
-    let mut camera_transform_query = set.p0();
-    let mut camera_transform = camera_transform_query.single_mut();
-    let translation_direction = camera_target_point - camera_transform.translation;
+    ) - new_relative_position_direction_xz * CAMERA_FOLLOW_DISTANCE;
 
-    if translation_direction == Vec3::ZERO {
-        return;
-    }
-
-    let trans_dir_norm = translation_direction.normalize();
-    let trans_dir_mag = translation_direction.length();
-
-    if trans_dir_mag > CAMERA_TRANS_EPS {
-        camera_transform.translation +=
-            trans_dir_norm * trans_dir_mag * CAMERA_FOLLOW_SPEED * time.delta_seconds();
-    }
+    camera_transform.translation = new_translation.lerp(
+        camera_target_point,
+        CAMERA_FOLLOW_SPEED * time.delta_seconds(),
+    );
 }
