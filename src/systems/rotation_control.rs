@@ -2,6 +2,7 @@ use crate::constants::camera::{
     CAMERA_MAX_PITCH, CAMERA_MAX_PITCH_SPEED, CAMERA_MAX_YAW_SPEED, CAMERA_MIN_PITCH,
     CAMERA_PITCH_SPEED, CAMERA_YAW_SPEED,
 };
+use crate::traits::StableInterpolate;
 use crate::{
     components::{LocalPlayer, ThirdPersonCamera},
     key_mappings::rotation::RotationAction,
@@ -28,14 +29,11 @@ pub fn rotation_control(
         _ => Rotor3::IDENTITY,
     };
 
-    let yaw_speed = ((ax_data.x().abs() * CAMERA_YAW_SPEED).min(CAMERA_MAX_YAW_SPEED)
-        * time.delta_seconds())
-    .clamp(0.0, 0.03);
+    let yaw_speed = (ax_data.x().abs() * CAMERA_YAW_SPEED).clamp(0.0, CAMERA_MAX_YAW_SPEED);
     let yaw_target = (yaw_rotor * camera_transform.rotation).normalize();
-    camera_transform.rotation = camera_transform
+    camera_transform
         .rotation
-        .slerp(yaw_target, yaw_speed)
-        .normalize();
+        .smooth_nudge(&yaw_target, yaw_speed, time.delta_seconds());
 
     let forward = camera_transform.forward().into();
     let up = camera_transform.up().into();
@@ -46,20 +44,17 @@ pub fn rotation_control(
     };
 
     let pitch_target = (pitch_rotor * camera_transform.rotation).normalize();
-    let pitch_speed = ((ax_data.y().abs() * CAMERA_PITCH_SPEED).min(CAMERA_MAX_PITCH_SPEED)
-        * time.delta_seconds())
-    .clamp(0.0, 0.03);
-    let new_rotation = camera_transform
+    let pitch_speed = (ax_data.y().abs() * CAMERA_PITCH_SPEED).clamp(0.0, CAMERA_MAX_PITCH_SPEED);
+    let current_rotation = camera_transform.rotation;
+    camera_transform
         .rotation
-        .slerp(pitch_target, pitch_speed)
-        .normalize();
-    let rotation_target = camera_transform.with_rotation(new_rotation);
+        .smooth_nudge(&pitch_target, pitch_speed, time.delta_seconds());
 
-    let forward = rotation_target.forward();
+    let forward = camera_transform.forward();
     let forward_xz = Vec3::new(forward.x, 0.0, forward.z);
     let pitch = forward.angle_between(forward_xz);
 
-    if (CAMERA_MIN_PITCH..=CAMERA_MAX_PITCH).contains(&pitch) {
-        camera_transform.rotation = rotation_target.rotation;
+    if !(CAMERA_MIN_PITCH..=CAMERA_MAX_PITCH).contains(&pitch) {
+        camera_transform.rotation = current_rotation;
     }
 }

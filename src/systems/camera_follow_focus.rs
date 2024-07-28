@@ -6,7 +6,7 @@ use crate::{
         CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_DISTANCE_XZ, CAMERA_FOLLOW_HEIGHT,
         CAMERA_FOLLOW_SPEED,
     },
-    traits::Project,
+    traits::{Project, StableInterpolate},
 };
 
 pub fn camera_follow_focus(
@@ -33,7 +33,9 @@ pub fn camera_follow_focus(
     let follow_speed =
         CAMERA_FOLLOW_SPEED * relative_translation_direction.length() / *CAMERA_FOLLOW_DISTANCE;
 
-    camera_transform.translation = camera_transform
-        .translation
-        .lerp(camera_target_point, follow_speed * time.delta_seconds());
+    camera_transform.translation.smooth_nudge(
+        &camera_target_point,
+        follow_speed,
+        time.delta_seconds(),
+    );
 }

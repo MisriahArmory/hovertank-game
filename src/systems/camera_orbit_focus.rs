@@ -1,6 +1,7 @@
 use crate::{
     components::{ThirdPersonCamera, ThirdPersonCameraFocus},
     constants::camera::CAMERA_FOLLOW_ROTATION_SPEED,
+    traits::StableInterpolate,
     Rotor3,
 };
 use bevy::prelude::*;
@@ -27,15 +28,14 @@ pub fn camera_orbit_focus(
 
     let camera_forward_xz = Vec3::new(camera_forward.x, 0.0, camera_forward.z).normalize();
     let relative_angle = relative_translation_direction_xz.angle_between(camera_forward_xz);
-    let orbit_speed =
-        (relative_angle * CAMERA_FOLLOW_ROTATION_SPEED * time.delta_seconds()).clamp(0.0, 0.2);
+    let orbit_speed = relative_angle * CAMERA_FOLLOW_ROTATION_SPEED;
     // We need to flip the arc here since we are usually behind the focus object and our rotation
     // is applied from the forward direction.
     let camera_target_rotor =
         Rotor3::from_rotation_arc(relative_translation_direction_xz, camera_forward_xz);
-    let camera_orbit_rotor = Rotor3::IDENTITY
-        .slerp(camera_target_rotor, orbit_speed)
-        .normalize();
+    let mut camera_orbit_rotor = Rotor3::IDENTITY;
+    camera_orbit_rotor.smooth_nudge(&camera_target_rotor, orbit_speed, time.delta_seconds());
+
     let camera_orbit_translation = camera_orbit_rotor.mul_vec3(relative_translation_direction);
     camera_transform.translation = focus_transform.translation - camera_orbit_translation;
 }
