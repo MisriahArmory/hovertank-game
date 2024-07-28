@@ -2,11 +2,8 @@ use bevy::prelude::*;
 
 use crate::{
     components::{ThirdPersonCamera, ThirdPersonCameraFocus},
-    constants::camera::{
-        CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_DISTANCE_XZ, CAMERA_FOLLOW_HEIGHT,
-        CAMERA_FOLLOW_SPEED,
-    },
-    traits::{Project, StableInterpolate},
+    constants::camera::{CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_SPEED},
+    traits::StableInterpolate,
 };
 
 pub fn camera_follow_focus(
@@ -20,18 +17,15 @@ pub fn camera_follow_focus(
     let mut camera_transform_query = set.p0();
     let mut camera_transform = camera_transform_query.single_mut();
 
-    let relative_translation_direction = focus_transform.translation - camera_transform.translation;
-    let relative_translation_direction_xz =
-        relative_translation_direction.project_normalized(Vec3::Y);
+    let focus_offset = focus_transform.translation + Vec3::Y * CAMERA_FOLLOW_HEIGHT;
 
-    let camera_target_point = Vec3::new(
-        focus_transform.translation.x,
-        focus_transform.translation.y + CAMERA_FOLLOW_HEIGHT,
-        focus_transform.translation.z,
-    ) - relative_translation_direction_xz * CAMERA_FOLLOW_DISTANCE_XZ;
+    let relative_translation = focus_offset - camera_transform.translation;
+    let relative_translation_direction = relative_translation.normalize();
 
-    let follow_speed =
-        CAMERA_FOLLOW_SPEED * relative_translation_direction.length() / *CAMERA_FOLLOW_DISTANCE;
+    let camera_target_point =
+        focus_offset - relative_translation_direction * CAMERA_FOLLOW_DISTANCE;
+
+    let follow_speed = CAMERA_FOLLOW_SPEED * relative_translation.length() / CAMERA_FOLLOW_DISTANCE;
 
     camera_transform.translation.smooth_nudge(
         &camera_target_point,
