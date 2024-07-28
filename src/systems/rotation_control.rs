@@ -21,36 +21,37 @@ pub fn rotation_control(
     let Some(ax_data) = action.axis_pair(&RotationAction::Rotate) else {
         return;
     };
-    let yaw_rotor = match (ax_data.x().abs(), ax_data.x().signum()) {
-        (0.0, 1.0) => Rotor3::IDENTITY,
-        (_, -1.0) => Rotor3::from_rotation_arc(Vec3::Z, Vec3::X),
-        (_, 1.0) => Rotor3::from_rotation_arc(Vec3::X, Vec3::Z),
+
+    let yaw_rotor = match ax_data.x() {
+        0.0.. => Rotor3::from_rotation_arc(Vec3::X, Vec3::Z),
+        ..0.0 => Rotor3::from_rotation_arc(Vec3::Z, Vec3::X),
         _ => Rotor3::IDENTITY,
     };
 
-    let yaw_speed = (ax_data.x().abs() * CAMERA_YAW_SPEED).min(CAMERA_MAX_YAW_SPEED);
+    let yaw_speed = ((ax_data.x().abs() * CAMERA_YAW_SPEED).min(CAMERA_MAX_YAW_SPEED)
+        * time.delta_seconds())
+    .clamp(0.0, 0.03);
+    let yaw_target = (yaw_rotor * camera_transform.rotation).normalize();
     camera_transform.rotation = camera_transform
         .rotation
-        .slerp(
-            yaw_rotor * camera_transform.rotation,
-            yaw_speed * time.delta_seconds(),
-        )
+        .slerp(yaw_target, yaw_speed)
         .normalize();
 
     let forward = camera_transform.forward().into();
     let up = camera_transform.up().into();
-    let pitch_rotor = match (ax_data.y().abs(), ax_data.y().signum()) {
-        (0.0, 1.0) => Rotor3::IDENTITY,
-        (_, -1.0) => Rotor3::from_rotation_arc(forward, up),
-        (_, 1.0) => Rotor3::from_rotation_arc(up, forward),
+    let pitch_rotor = match ax_data.y() {
+        0.0.. => Rotor3::from_rotation_arc(up, forward),
+        ..0.0 => Rotor3::from_rotation_arc(forward, up),
         _ => Rotor3::IDENTITY,
     };
 
-    let pitch_target = pitch_rotor * camera_transform.rotation;
-    let pitch_speed = (ax_data.y().abs() * CAMERA_PITCH_SPEED).min(CAMERA_MAX_PITCH_SPEED);
+    let pitch_target = (pitch_rotor * camera_transform.rotation).normalize();
+    let pitch_speed = ((ax_data.y().abs() * CAMERA_PITCH_SPEED).min(CAMERA_MAX_PITCH_SPEED)
+        * time.delta_seconds())
+    .clamp(0.0, 0.03);
     let new_rotation = camera_transform
         .rotation
-        .slerp(pitch_target, pitch_speed * time.delta_seconds())
+        .slerp(pitch_target, pitch_speed)
         .normalize();
     let rotation_target = camera_transform.with_rotation(new_rotation);
 

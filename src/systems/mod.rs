@@ -1,4 +1,5 @@
 pub mod camera_follow_focus;
+pub mod camera_orbit_focus;
 pub mod cursor;
 pub mod in_game;
 pub mod in_game_menu;

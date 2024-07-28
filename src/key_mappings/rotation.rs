@@ -18,23 +18,23 @@ impl RotationAction {
             DualAxis {
                 x: SingleAxis {
                     axis_type: AxisType::MouseMotion(MouseMotionAxisType::X),
-                    positive_low: 0.1,
-                    negative_low: -0.1,
+                    positive_low: 0.001,
+                    negative_low: -0.001,
                     inverted: false,
                     sensitivity: 0.05,
                     value: None,
                 },
                 y: SingleAxis {
                     axis_type: AxisType::MouseMotion(MouseMotionAxisType::Y),
-                    positive_low: 0.1,
-                    negative_low: -0.1,
+                    positive_low: 0.001,
+                    negative_low: -0.001,
                     inverted: false,
                     sensitivity: 0.05,
                     value: None,
                 },
                 deadzone: DeadZoneShape::Ellipse {
-                    radius_x: 0.1,
-                    radius_y: 0.1,
+                    radius_x: 0.001,
+                    radius_y: 0.001,
                 },
             },
         );

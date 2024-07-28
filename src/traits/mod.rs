@@ -8,7 +8,7 @@ pub trait Project {
 impl Project for Vec3 {
     /// Projects a vector onto the plane with the given normal vector
     fn project(&self, norm: Self) -> Self {
-        *self - self.dot(norm) / norm.dot(norm) * norm
+        *self - self.dot(norm) * norm
     }
 
     /// Projects and normalizes a vector on the plane with the given normal vector
