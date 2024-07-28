@@ -11,7 +11,7 @@ pub fn grab_cursor(mut q_windows: Query<&mut Window, With<PrimaryWindow>>) {
 }
 
 #[cfg(target_os = "windows")]
-fn grab_cursor(mut q_windows: Query<&mut Window, With<PrimaryWindow>>) {
+pub fn grab_cursor(mut q_windows: Query<&mut Window, With<PrimaryWindow>>) {
     let mut primary_window = q_windows.single_mut();
     primary_window.cursor.grab_mode = CursorGrabMode::Confined;
     primary_window.cursor.visible = false;
