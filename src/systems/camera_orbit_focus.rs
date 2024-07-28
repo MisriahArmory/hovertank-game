@@ -1,6 +1,8 @@
 use crate::{
     components::{ThirdPersonCamera, ThirdPersonCameraFocus},
-    constants::camera::{CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_ROTATION_SPEED},
+    constants::camera::{
+        CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_PITCH_ROTATION_SPEED, CAMERA_FOLLOW_YAW_ROTATION_SPEED,
+    },
     traits::Orbit,
 };
 use bevy::prelude::*;
@@ -22,7 +24,7 @@ pub fn camera_orbit_focus(
         focus_offset,
         camera_forward.into(),
         Vec3::Y,
-        CAMERA_FOLLOW_ROTATION_SPEED,
+        CAMERA_FOLLOW_YAW_ROTATION_SPEED,
         time.delta_seconds(),
     );
 
@@ -30,7 +32,7 @@ pub fn camera_orbit_focus(
         focus_offset,
         camera_forward.into(),
         camera_transform.right().into(),
-        CAMERA_FOLLOW_ROTATION_SPEED,
+        CAMERA_FOLLOW_PITCH_ROTATION_SPEED,
         time.delta_seconds(),
     );
 }

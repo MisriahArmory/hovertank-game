@@ -73,8 +73,6 @@ impl Orbit for Vec3 {
         let relative_angle =
             relative_translation_direction_in_plane.angle_between(forward_in_plane);
         let orbit_speed = relative_angle * orbit_speed;
-        // We need to flip the arc here since we are usually behind the focus object and our rotation
-        // is applied from the forward direction.
         let rotor =
             Rotor3::from_rotation_arc(relative_translation_direction_in_plane, forward_in_plane);
         let mut orbit_rotor = Rotor3::IDENTITY;
