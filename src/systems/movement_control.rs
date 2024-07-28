@@ -5,6 +5,7 @@ use crate::{
     components::{LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
     constants::movement::MOVEMENT_SPEED,
     key_mappings::movement::MoveAction,
+    traits::Project,
 };
 
 /// System to handle input controls.  Looks for an entity with an assigned input mapping
@@ -22,13 +23,9 @@ pub fn movement_control(
     let camera_query = set.p0();
     let camera_transform = camera_query.single();
 
-    // Get the camera view axis
-    let forward = camera_transform.forward();
-    let right = camera_transform.right();
-
-    // Project onto the x-z plane
-    let forward_xz = Vec3::new(forward.x, 0.0, forward.z).normalize();
-    let right_xz = Vec3::new(right.x, 0.0, right.z).normalize();
+    // Get the camera view axes on the xz plane
+    let forward = camera_transform.forward().project_normalized(Vec3::Y);
+    let right = camera_transform.right().project_normalized(Vec3::Y);
 
     let mut query = set.p1();
 
@@ -37,10 +34,10 @@ pub fn movement_control(
 
         for pressed_action in action.get_pressed() {
             match pressed_action {
-                MoveAction::Left => movement -= right_xz,
-                MoveAction::Right => movement += right_xz,
-                MoveAction::Forward => movement += forward_xz,
-                MoveAction::Backward => movement -= forward_xz,
+                MoveAction::Left => movement -= right,
+                MoveAction::Right => movement += right,
+                MoveAction::Forward => movement += forward,
+                MoveAction::Backward => movement -= forward,
             }
         }
 

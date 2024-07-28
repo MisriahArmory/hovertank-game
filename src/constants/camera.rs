@@ -1,4 +1,15 @@
+use std::f32::consts::{FRAC_PI_6, PI};
+
+pub const CAMERA_LOOK_AHEAD_DISTANCE: f32 = 5.0;
 pub const CAMERA_FOLLOW_SPEED: f32 = 3.0;
-pub const CAMERA_TRANS_EPS: f32 = 0.01;
-pub const CAMERA_FOLLOW_DISTANCE: f32 = 6.0;
-pub const CAMERA_FOLLOW_HEIGHT: f32 = 2.0;
+pub const CAMERA_FOLLOW_DISTANCE: f32 = 5.0;
+pub const CAMERA_FOLLOW_HEIGHT: f32 = 1.0;
+pub const CAMERA_FOLLOW_PITCH_ROTATION_SPEED: f32 = 16.0;
+pub const CAMERA_FOLLOW_YAW_ROTATION_SPEED: f32 = 80.0;
+pub const CAMERA_COMFORT_ZONE_PITCH: f32 = FRAC_PI_6;
+pub const CAMERA_MAX_PITCH: f32 = FRAC_PI_6 / 2.0;
+pub const CAMERA_MIN_PITCH: f32 = -FRAC_PI_6 / 2.0;
+pub const CAMERA_YAW_SPEED: f32 = 1.0;
+pub const CAMERA_PITCH_SPEED: f32 = 1.0;
+pub const CAMERA_MAX_YAW_SPEED: f32 = PI;
+pub const CAMERA_MAX_PITCH_SPEED: f32 = PI;
