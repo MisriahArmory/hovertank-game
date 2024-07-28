@@ -26,18 +26,20 @@ pub fn rotation_control(
         };
 
         let yaw_speed = (ax_data.x().abs() * CAMERA_YAW_SPEED).min(CAMERA_MAX_YAW_SPEED);
-        camera_transform.rotation = camera_transform.rotation.slerp(
-            yaw_rotor * camera_transform.rotation,
-            yaw_speed * time.delta_seconds(),
-        );
-        camera_transform.rotation = camera_transform.rotation.normalize();
+        camera_transform.rotation = camera_transform
+            .rotation
+            .slerp(
+                yaw_rotor * camera_transform.rotation,
+                yaw_speed * time.delta_seconds(),
+            )
+            .normalize();
 
-        let forward_normal = camera_transform.forward().normalize();
-        let up_normal = camera_transform.up().normalize();
+        let forward = camera_transform.forward().into();
+        let up = camera_transform.up().into();
         let pitch_rotor = match (ax_data.y().abs(), ax_data.y().signum()) {
             (0.0, 1.0) => Quat::IDENTITY,
-            (_, -1.0) => Quat::from_rotation_arc(forward_normal, up_normal),
-            (_, 1.0) => Quat::from_rotation_arc(up_normal, forward_normal),
+            (_, -1.0) => Quat::from_rotation_arc(forward, up),
+            (_, 1.0) => Quat::from_rotation_arc(up, forward),
             _ => Quat::IDENTITY,
         };
 
@@ -45,17 +47,16 @@ pub fn rotation_control(
         let pitch_speed = (ax_data.y().abs() * CAMERA_PITCH_SPEED).min(CAMERA_MAX_PITCH_SPEED);
         let new_rotation = camera_transform
             .rotation
-            .slerp(pitch_target, pitch_speed * time.delta_seconds());
-        let mut rotation_target = camera_transform.with_rotation(new_rotation);
+            .slerp(pitch_target, pitch_speed * time.delta_seconds())
+            .normalize();
+        let rotation_target = camera_transform.with_rotation(new_rotation);
 
         let forward = rotation_target.forward();
         let forward_xz = Vec3::new(forward.x, 0.0, forward.z);
         let pitch = forward.angle_between(forward_xz);
 
-        if !(CAMERA_MIN_PITCH..CAMERA_MAX_PITCH).contains(&pitch) {
-            rotation_target.rotation = camera_transform.rotation;
+        if (CAMERA_MIN_PITCH..=CAMERA_MAX_PITCH).contains(&pitch) {
+            camera_transform.rotation = rotation_target.rotation;
         }
-
-        camera_transform.rotation = rotation_target.rotation.normalize();
     }
 }
