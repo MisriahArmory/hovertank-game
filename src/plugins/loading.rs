@@ -1,4 +1,4 @@
-use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
+use bevy::prelude::*;
 use bevy_asset_loader::loading_state::{config::ConfigureLoadingState, LoadingState, LoadingStateAppExt, LoadingStateSet};
 use iyes_progress::{ProgressPlugin, ProgressSystem};
 
@@ -13,7 +13,6 @@ pub fn loading_plugin(app: &mut App) {
     app
         .add_plugins((
             ProgressPlugin::new(AppState::Loading).continue_to(AppState::InGame),
-            FrameTimeDiagnosticsPlugin,
         ))
         .add_loading_state(
             LoadingState::new(AppState::Loading)
