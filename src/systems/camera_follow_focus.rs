@@ -21,30 +21,31 @@ pub fn camera_follow_focus(
     let mut camera_transform = camera_transform_query.single_mut();
     let camera_forward = camera_transform.forward();
 
-    let relative_position_direction_xz =
-        (focus_transform.translation - camera_transform.translation).project_normalized(Vec3::Y);
-    let camera_distance = (focus_transform.translation - camera_transform.translation).length();
+    let relative_position_direction = focus_transform.translation - camera_transform.translation;
+    let relative_position_direction_xz = relative_position_direction.project_normalized(Vec3::Y);
 
     let camera_forward_xz = camera_forward.project_normalized(Vec3::Y);
-    let camera_orbit_rotor =
-        -Quat::from_rotation_arc(relative_position_direction_xz, camera_forward_xz);
-    let new_relative_position = camera_orbit_rotor.mul_vec3(relative_position_direction_xz);
-    let target_orbit_point = focus_transform.translation + Vec3::Y * CAMERA_FOLLOW_HEIGHT
-        - new_relative_position * camera_distance;
-
-    let new_translation = camera_transform.translation.lerp(
-        target_orbit_point,
-        CAMERA_FOLLOW_ROTATION_SPEED * time.delta_seconds(),
+    // We need to flip the arc here since we are usually behind the focus object and our rotation
+    // is applied from the forward direction.
+    let camera_target_rotor =
+        Quat::from_rotation_arc(relative_position_direction_xz, camera_forward_xz);
+    let camera_orbit_rotor = Quat::IDENTITY.slerp(
+        camera_target_rotor,
+        time.delta_seconds() * CAMERA_FOLLOW_ROTATION_SPEED,
     );
 
-    let new_relative_position_direction_xz =
-        (focus_transform.translation - new_translation).project_normalized(Vec3::Y);
+    let new_translation =
+        focus_transform.translation - camera_orbit_rotor.mul_vec3(relative_position_direction);
+    let new_relative_translation = focus_transform.translation - new_translation;
+
+    let new_relative_translation_direction_xz =
+        new_relative_translation.project_normalized(Vec3::Y);
 
     let camera_target_point = Vec3::new(
         focus_transform.translation.x,
         CAMERA_FOLLOW_HEIGHT,
         focus_transform.translation.z,
-    ) - new_relative_position_direction_xz * CAMERA_FOLLOW_DISTANCE;
+    ) - new_relative_translation_direction_xz * CAMERA_FOLLOW_DISTANCE;
 
     camera_transform.translation = new_translation.lerp(
         camera_target_point,
