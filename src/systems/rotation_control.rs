@@ -5,6 +5,7 @@ use crate::constants::camera::{
 use crate::{
     components::{LocalPlayer, ThirdPersonCamera},
     key_mappings::rotation::RotationAction,
+    Rotor3,
 };
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
@@ -21,10 +22,10 @@ pub fn rotation_control(
         return;
     };
     let yaw_rotor = match (ax_data.x().abs(), ax_data.x().signum()) {
-        (0.0, 1.0) => Quat::IDENTITY,
-        (_, -1.0) => Quat::from_rotation_arc(Vec3::Z, Vec3::X),
-        (_, 1.0) => Quat::from_rotation_arc(Vec3::X, Vec3::Z),
-        _ => Quat::IDENTITY,
+        (0.0, 1.0) => Rotor3::IDENTITY,
+        (_, -1.0) => Rotor3::from_rotation_arc(Vec3::Z, Vec3::X),
+        (_, 1.0) => Rotor3::from_rotation_arc(Vec3::X, Vec3::Z),
+        _ => Rotor3::IDENTITY,
     };
 
     let yaw_speed = (ax_data.x().abs() * CAMERA_YAW_SPEED).min(CAMERA_MAX_YAW_SPEED);
@@ -39,10 +40,10 @@ pub fn rotation_control(
     let forward = camera_transform.forward().into();
     let up = camera_transform.up().into();
     let pitch_rotor = match (ax_data.y().abs(), ax_data.y().signum()) {
-        (0.0, 1.0) => Quat::IDENTITY,
-        (_, -1.0) => Quat::from_rotation_arc(forward, up),
-        (_, 1.0) => Quat::from_rotation_arc(up, forward),
-        _ => Quat::IDENTITY,
+        (0.0, 1.0) => Rotor3::IDENTITY,
+        (_, -1.0) => Rotor3::from_rotation_arc(forward, up),
+        (_, 1.0) => Rotor3::from_rotation_arc(up, forward),
+        _ => Rotor3::IDENTITY,
     };
 
     let pitch_target = pitch_rotor * camera_transform.rotation;

@@ -7,6 +7,7 @@ use crate::{
         CAMERA_FOLLOW_SPEED,
     },
     traits::Project,
+    Rotor3,
 };
 
 pub fn camera_follow_focus(
@@ -28,8 +29,8 @@ pub fn camera_follow_focus(
     // We need to flip the arc here since we are usually behind the focus object and our rotation
     // is applied from the forward direction.
     let camera_target_rotor =
-        Quat::from_rotation_arc(relative_position_direction_xz, camera_forward_xz);
-    let camera_orbit_rotor = Quat::IDENTITY.slerp(
+        Rotor3::from_rotation_arc(relative_position_direction_xz, camera_forward_xz);
+    let camera_orbit_rotor = Rotor3::IDENTITY.slerp(
         camera_target_rotor,
         time.delta_seconds() * CAMERA_FOLLOW_ROTATION_SPEED,
     );
