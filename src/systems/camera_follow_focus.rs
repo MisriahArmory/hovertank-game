@@ -2,7 +2,10 @@ use bevy::prelude::*;
 
 use crate::{
     components::{ThirdPersonCamera, ThirdPersonCameraFocus},
-    constants::camera::{CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_SPEED},
+    constants::camera::{
+        CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_SNAP_DISTANCE,
+        CAMERA_FOLLOW_SPEED,
+    },
     traits::StableInterpolate,
 };
 
@@ -27,9 +30,15 @@ pub fn camera_follow_focus(
 
     let follow_speed = CAMERA_FOLLOW_SPEED * relative_translation.length() / CAMERA_FOLLOW_DISTANCE;
 
-    camera_transform.translation.smooth_nudge(
-        &camera_target_point,
-        follow_speed,
-        time.delta_seconds(),
-    );
+    let camera_target_distance = (camera_transform.translation - camera_target_point).length();
+
+    if camera_target_distance > CAMERA_FOLLOW_SNAP_DISTANCE {
+        camera_transform.translation.smooth_nudge(
+            &camera_target_point,
+            follow_speed,
+            time.delta_seconds(),
+        );
+    } else {
+        camera_transform.translation = camera_target_point;
+    }
 }

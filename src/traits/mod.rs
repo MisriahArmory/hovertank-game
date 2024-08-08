@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::Rotor3;
+use crate::{constants::orbit::ORBIT_ANGLE_EPS, Rotor3};
 
 pub trait Project {
     fn project(&self, norm: Self) -> Self;
@@ -76,7 +76,11 @@ impl Orbit for Vec3 {
         let rotor =
             Rotor3::from_rotation_arc(relative_translation_direction_in_plane, forward_in_plane);
         let mut orbit_rotor = Rotor3::IDENTITY;
-        orbit_rotor.smooth_nudge(&rotor, orbit_speed, rate);
+        if relative_angle > ORBIT_ANGLE_EPS {
+            orbit_rotor.smooth_nudge(&rotor, orbit_speed, rate);
+        } else {
+            orbit_rotor = rotor;
+        }
 
         let orbit_translation = orbit_rotor.mul_vec3(relative_translation);
         other - orbit_translation
