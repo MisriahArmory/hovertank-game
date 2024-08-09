@@ -3,13 +3,11 @@ use bevy::prelude::*;
 use crate::{
     states::{app::AppState, in_game::InGame},
     systems::{
-        camera_follow_focus::camera_follow_focus,
-        camera_orbit_focus::camera_orbit_focus,
+        camera_follow::camera_follow,
         cursor::{grab_cursor, release_cursor},
         in_game::{in_game, setup_in_game},
         in_game_menu::{setup_in_game_menu, toggle_in_game_menu},
-        movement_control::movement_control,
-        rotation_control::rotation_control,
+        sets::ControlSet,
     },
 };
 
@@ -21,12 +19,10 @@ pub fn in_game_plugin(app: &mut App) {
         )
         .add_systems(
             Update,
-            (
-                camera_orbit_focus.after(rotation_control),
-                camera_follow_focus.after(movement_control),
-            )
+            (camera_follow
+                .after(ControlSet)
                 .chain()
-                .run_if(in_state(AppState::InGame)),
+                .run_if(in_state(AppState::InGame)),),
         )
         .add_systems(
             Update,

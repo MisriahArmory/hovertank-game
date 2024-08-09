@@ -47,7 +47,7 @@ pub fn setup_in_game(
                 ..default()
             },
             input: InputBundle::default(),
-            third_person_camera_focus: ThirdPersonCameraFocus,
+            third_person_camera_focus: ThirdPersonCameraFocus::default(),
         },
     ));
 
