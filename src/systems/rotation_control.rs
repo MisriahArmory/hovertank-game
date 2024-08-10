@@ -1,6 +1,5 @@
 use crate::constants::camera::{
     CAMERA_MAX_PITCH, CAMERA_MAX_PITCH_SPEED, CAMERA_MAX_YAW_SPEED, CAMERA_MIN_PITCH,
-    CAMERA_PITCH_SPEED, CAMERA_YAW_SPEED,
 };
 use crate::traits::StableInterpolate;
 use crate::{
@@ -19,17 +18,15 @@ pub fn rotation_control(
     let action = control_query.single();
     let mut camera_transform = camera_query.single_mut();
 
-    let Some(ax_data) = action.axis_pair(&RotationAction::Rotate) else {
-        return;
-    };
+    let ax_data = action.clamped_axis_pair(&RotationAction::Rotate);
 
-    let yaw_rotor = match ax_data.x() {
+    let yaw_rotor = match ax_data.x {
         0.0.. => Rotor3::from_rotation_arc(Vec3::X, Vec3::Z),
         ..0.0 => Rotor3::from_rotation_arc(Vec3::Z, Vec3::X),
         _ => Rotor3::IDENTITY,
     };
 
-    let yaw_speed = (ax_data.x().abs() * CAMERA_YAW_SPEED).clamp(0.0, CAMERA_MAX_YAW_SPEED);
+    let yaw_speed = ax_data.x.abs() * CAMERA_MAX_YAW_SPEED;
     let yaw_target = (yaw_rotor * camera_transform.rotation).normalize();
     camera_transform
         .rotation
@@ -37,14 +34,14 @@ pub fn rotation_control(
 
     let forward = camera_transform.forward().into();
     let up = camera_transform.up().into();
-    let pitch_rotor = match ax_data.y() {
+    let pitch_rotor = match ax_data.y {
         0.0.. => Rotor3::from_rotation_arc(up, forward),
         ..0.0 => Rotor3::from_rotation_arc(forward, up),
         _ => Rotor3::IDENTITY,
     };
 
     let pitch_target = (pitch_rotor * camera_transform.rotation).normalize();
-    let pitch_speed = (ax_data.y().abs() * CAMERA_PITCH_SPEED).clamp(0.0, CAMERA_MAX_PITCH_SPEED);
+    let pitch_speed = ax_data.y.abs() * CAMERA_MAX_PITCH_SPEED;
     let current_rotation = camera_transform.rotation;
     camera_transform
         .rotation

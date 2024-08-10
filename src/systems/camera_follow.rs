@@ -55,13 +55,11 @@ pub fn camera_follow(
     }
 
     let action = control_query.single();
-    let Some(ax_data) = action.axis_pair(&RotationAction::Rotate) else {
-        return;
-    };
+    let ax_data = action.clamped_axis_pair(&RotationAction::Rotate);
 
     // Orbit around the focus offset point
     let camera_follow_yaw_rotation_speed =
-        32.0 + CAMERA_FOLLOW_YAW_ROTATION_SPEED * ax_data.x().abs().min(1.0);
+        32.0 + CAMERA_FOLLOW_YAW_ROTATION_SPEED * ax_data.x.abs().min(1.0);
     let camera_forward = camera_transform.forward();
 
     camera_transform.translation = camera_transform.translation.orbit(

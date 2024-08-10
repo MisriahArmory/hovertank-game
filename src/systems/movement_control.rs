@@ -3,7 +3,7 @@ use leafwing_input_manager::prelude::*;
 
 use crate::{
     components::{LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
-    constants::movement::MOVEMENT_SPEED,
+    constants::movement::MAX_MOVEMENT_SPEED,
     key_mappings::movement::MoveAction,
     traits::Project,
 };
@@ -38,12 +38,20 @@ pub fn movement_control(
                 MoveAction::Right => movement += right,
                 MoveAction::Forward => movement += forward,
                 MoveAction::Backward => movement -= forward,
+                _ => {}
             }
         }
 
+        let ax_data = action.clamped_axis_pair(&MoveAction::Move);
+        movement += right * ax_data.x;
+        movement += forward * ax_data.y;
+
+        if movement.length() > MAX_MOVEMENT_SPEED {
+            movement = movement.normalize() * MAX_MOVEMENT_SPEED;
+        }
+
         if movement != Vec3::ZERO {
-            movement = movement.normalize();
-            transform.translation += movement * MOVEMENT_SPEED * time.delta_seconds();
+            transform.translation += movement * MAX_MOVEMENT_SPEED * time.delta_seconds();
         }
     }
 }
