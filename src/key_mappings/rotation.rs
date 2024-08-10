@@ -17,8 +17,7 @@ impl RotationAction {
                 RotationAction::Rotate,
                 GamepadStick::RIGHT
                     .inverted_y()
-                    .with_deadzone_x_symmetric(0.01)
-                    .with_deadzone_y_symmetric(0.01)
+                    .with_circle_deadzone(0.01)
                     .sensitivity_x(1.0)
                     .sensitivity_y(1.0),
             )
