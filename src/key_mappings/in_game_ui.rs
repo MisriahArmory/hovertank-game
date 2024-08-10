@@ -11,6 +11,7 @@ impl InGameUiAction {
         let mut input_map = InputMap::default();
 
         input_map.insert(Self::ToggleMenu, KeyCode::Escape);
+        input_map.insert(Self::ToggleMenu, GamepadButtonType::Start);
 
         input_map
     }

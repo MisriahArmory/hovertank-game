@@ -58,7 +58,6 @@ pub fn setup_in_game(
             transform: Transform::from_xyz(0.0, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_DISTANCE),
             ..default()
         },
-        LocalPlayer,
         ThirdPersonCamera,
     ));
 }
