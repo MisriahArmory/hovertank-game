@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::{
-    components::{LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
+    components::{CameraFocus, LocalPlayer},
     constants::movement::MAX_MOVEMENT_SPEED,
     key_mappings::movement::MoveAction,
     traits::Project,
@@ -12,11 +12,8 @@ use crate::{
 /// and will scan against the controls to determine if the entity should be moved.
 pub fn movement_control(
     mut set: ParamSet<(
-        Query<&Transform, With<ThirdPersonCamera>>,
-        Query<
-            (&mut Transform, &ActionState<MoveAction>),
-            (With<LocalPlayer>, With<ThirdPersonCameraFocus>),
-        >,
+        Query<&Transform, With<Camera>>,
+        Query<(&mut Transform, &ActionState<MoveAction>), (With<LocalPlayer>, With<CameraFocus>)>,
     )>,
     time: Res<Time>,
 ) {

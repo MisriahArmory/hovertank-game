@@ -5,17 +5,13 @@ use crate::constants::camera::{
     CAMERA_MAX_PITCH_SPEED, CAMERA_MAX_YAW_SPEED, CAMERA_MIN_PITCH,
 };
 use crate::traits::StableInterpolate;
-use crate::{
-    components::{LocalPlayer, ThirdPersonCamera},
-    key_mappings::rotation::RotationAction,
-    Rotor3,
-};
+use crate::{components::LocalPlayer, key_mappings::rotation::RotationAction, Rotor3};
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-pub fn rotation_control(
+pub fn third_person_rotation_control(
     mut control_query: Query<(&mut LastInput, &ActionState<RotationAction>), With<LocalPlayer>>,
-    mut camera_query: Query<&mut Transform, With<ThirdPersonCamera>>,
+    mut camera_query: Query<&mut Transform, With<Camera>>,
     time: Res<Time>,
 ) {
     let (mut last_input, action) = control_query.single_mut();

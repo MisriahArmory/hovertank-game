@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{
     bundles::{input::InputBundle, local_player::LocalPlayerBundle},
-    components::{LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
+    components::{CameraFocus, LocalPlayer},
     constants::camera::{CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_HEIGHT},
     states::app::AppState,
 };
@@ -47,7 +47,7 @@ pub fn setup_in_game(
                 ..default()
             },
             input: InputBundle::default(),
-            third_person_camera_focus: ThirdPersonCameraFocus::default(),
+            camera_focus: CameraFocus::default(),
         },
     ));
 
@@ -58,7 +58,6 @@ pub fn setup_in_game(
             transform: Transform::from_xyz(0.0, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_DISTANCE),
             ..default()
         },
-        ThirdPersonCamera,
     ));
 }
 
