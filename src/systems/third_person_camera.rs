@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::{
-    components::{LocalPlayer, ThirdPersonCamera, ThirdPersonCameraFocus},
+    components::{CameraFocus, LocalPlayer},
     constants::camera::{
         CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_PITCH_ROTATION_SPEED,
         CAMERA_FOLLOW_SNAP_DISTANCE, CAMERA_FOLLOW_SPEED, CAMERA_FOLLOW_YAW_ROTATION_SPEED,
@@ -11,11 +11,11 @@ use crate::{
     traits::{Orbit, StableInterpolate},
 };
 
-pub fn camera_follow(
+pub fn third_person_camera(
     control_query: Query<&ActionState<RotationAction>, With<LocalPlayer>>,
     mut set: ParamSet<(
-        Query<&mut Transform, With<ThirdPersonCamera>>,
-        Query<(&Transform, &mut ThirdPersonCameraFocus)>,
+        Query<&mut Transform, With<Camera>>,
+        Query<(&Transform, &mut CameraFocus)>,
     )>,
     time: Res<Time>,
 ) {

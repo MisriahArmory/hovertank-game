@@ -1,13 +1,16 @@
-pub mod camera_follow;
+pub mod camera_mode;
 pub mod cursor;
+pub mod first_person_camera;
 pub mod in_game;
 pub mod in_game_menu;
 pub mod loading;
 pub mod main_menu;
 pub mod movement_control;
+pub mod rotate_local_player;
 pub mod rotation_control;
 pub mod sets;
 pub mod splash;
+pub mod third_person_camera;
 
 use bevy::prelude::*;
 
