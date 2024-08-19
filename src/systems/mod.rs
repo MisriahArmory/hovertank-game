@@ -6,10 +6,11 @@ pub mod in_game_menu;
 pub mod loading;
 pub mod main_menu;
 pub mod movement_control;
+pub mod rotate_local_player;
+pub mod rotation_control;
 pub mod sets;
 pub mod splash;
 pub mod third_person_camera;
-pub mod third_person_rotation_control;
 
 use bevy::prelude::*;
 

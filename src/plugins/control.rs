@@ -2,14 +2,14 @@ use bevy::prelude::*;
 use leafwing_input_manager::plugin::InputManagerPlugin;
 
 use crate::{
+    components::LocalPlayer,
     key_mappings::{
         camera::ChangeCameraMode, in_game_ui::InGameUiAction, movement::MoveAction,
         rotation::RotationAction,
     },
     states::{camera_mode::CameraMode, in_game::InGame},
     systems::{
-        movement_control::movement_control, sets::ControlSet,
-        third_person_rotation_control::third_person_rotation_control,
+        movement_control::movement_control, rotation_control::rotation_control, sets::ControlSet,
     },
 };
 
@@ -22,7 +22,8 @@ pub fn control_plugin(app: &mut App) {
             Update,
             (
                 movement_control,
-                third_person_rotation_control.run_if(in_state(CameraMode::ThirdPerson)),
+                rotation_control::<Camera>.run_if(in_state(CameraMode::ThirdPerson)),
+                rotation_control::<LocalPlayer>.run_if(in_state(CameraMode::FirstPerson)),
             )
                 .in_set(ControlSet),
         )
