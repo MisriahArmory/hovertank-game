@@ -1,3 +1,4 @@
+use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
@@ -6,6 +7,7 @@ use crate::{
         camera_mode::toggle_camera_mode,
         cursor::{grab_cursor, release_cursor},
         first_person_camera::first_person_camera,
+        hover::hover,
         in_game::{in_game, setup_in_game},
         in_game_menu::{setup_in_game_menu, toggle_in_game_menu},
         rotate_local_player::rotate_local_player,
@@ -15,11 +17,14 @@ use crate::{
 };
 
 pub fn in_game_plugin(app: &mut App) {
-    app.add_systems(OnEnter(AppState::InGame), setup_in_game)
+    app.add_plugins(PhysicsPlugins::default())
+        .insert_resource(Gravity::default())
+        .add_systems(OnEnter(AppState::InGame), setup_in_game)
         .add_systems(
             OnEnter(InGame::MenuOpen),
             (setup_in_game_menu, release_cursor),
         )
+        .add_systems(FixedUpdate, hover.run_if(in_state(AppState::InGame)))
         .add_systems(
             Update,
             (

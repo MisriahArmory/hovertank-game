@@ -1,6 +1,7 @@
 pub mod camera_mode;
 pub mod cursor;
 pub mod first_person_camera;
+pub mod hover;
 pub mod in_game;
 pub mod in_game_menu;
 pub mod loading;
