@@ -1,4 +1,5 @@
 pub mod camera_focus;
+pub mod hold_position;
 pub mod hover;
 pub mod last_input;
 pub mod local_player;

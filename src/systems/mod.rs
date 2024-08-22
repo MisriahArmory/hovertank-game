@@ -1,25 +1,20 @@
-pub mod camera_mode;
-pub mod cursor;
-pub mod first_person_camera;
-pub mod hover;
-pub mod in_game;
-pub mod in_game_menu;
-pub mod loading;
-pub mod main_menu;
-pub mod movement_control;
-pub mod rotate_local_player;
-pub mod rotation_control;
+pub mod camera;
+pub mod control;
 pub mod sets;
-pub mod splash;
-pub mod third_person_camera;
+pub mod state;
+pub mod tank;
+pub mod ui;
 
-use bevy::prelude::*;
-
-pub fn despawn_with_component<T: Component>(
-    to_despawn: Query<Entity, With<T>>,
-    mut commands: Commands,
-) {
-    for entity in &to_despawn {
-        commands.entity(entity).despawn_recursive();
-    }
-}
+pub use camera::camera_mode;
+pub use camera::first_person_camera;
+pub use camera::third_person_camera;
+pub use control::movement_control;
+pub use control::rotation_control;
+pub use state::in_game;
+pub use state::loading;
+pub use state::main_menu;
+pub use state::splash;
+pub use tank::hover;
+pub use tank::rotate_local_player;
+pub use ui::cursor;
+pub use ui::in_game_menu;

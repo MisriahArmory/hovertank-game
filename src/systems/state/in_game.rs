@@ -2,8 +2,7 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    bundles::{input::InputBundle, local_player::LocalPlayerBundle},
-    components::{CameraFocus, Hover, LocalPlayer},
+    bundles::{local_player::LocalPlayerBundle, tank::TankBundle},
     constants::camera::{CAMERA_FOLLOW_DISTANCE, CAMERA_FOLLOW_HEIGHT},
     states::app::AppState,
 };
@@ -39,29 +38,29 @@ pub fn setup_in_game(
         },
     ));
 
+    // Dummy Cube
+    commands.spawn((
+        StateScoped(AppState::InGame),
+        TankBundle::default(),
+        PbrBundle {
+            mesh: meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
+            material: materials.add(Color::srgb(0.8, 0.5, 0.4)),
+            transform: Transform::from_xyz(0.0, 3.5, 0.1),
+            ..default()
+        },
+    ));
+
     // Player
     commands.spawn((
         StateScoped(AppState::InGame),
-        RigidBody::Dynamic,
-        Collider::cuboid(1.0, 1.0, 1.0),
-        ColliderDensity(750.0),
         LocalPlayerBundle {
-            hover: Hover {
-                target_height: 1.5,
-                max_hover_strength: 2.0,
-                max_hover_speed: 0.25,
-            },
-            external_force: ExternalForce::default().with_persistence(false),
-            ray_caster: RayCaster::new(Vec3::ZERO, Dir3::NEG_Y).with_max_hits(1),
-            local_player: LocalPlayer,
             player_model: PbrBundle {
                 mesh: meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
                 material: materials.add(Color::srgb(0.8, 0.7, 0.6)),
                 transform: Transform::from_xyz(0.0, 1.5, 0.0),
                 ..default()
             },
-            input: InputBundle::default(),
-            camera_focus: CameraFocus::default(),
+            ..default()
         },
     ));
 
