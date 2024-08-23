@@ -14,6 +14,7 @@ pub use state::in_game;
 pub use state::loading;
 pub use state::main_menu;
 pub use state::splash;
+pub use tank::hold_position;
 pub use tank::hover;
 pub use tank::rotate_local_player;
 pub use ui::cursor;

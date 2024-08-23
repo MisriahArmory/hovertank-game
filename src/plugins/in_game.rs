@@ -7,6 +7,7 @@ use crate::{
         camera_mode::toggle_camera_mode,
         cursor::{grab_cursor, release_cursor},
         first_person_camera::first_person_camera,
+        hold_position::hold_position,
         hover::hover,
         in_game::{in_game, setup_in_game},
         in_game_menu::{setup_in_game_menu, toggle_in_game_menu},
@@ -24,7 +25,10 @@ pub fn in_game_plugin(app: &mut App) {
             OnEnter(InGame::MenuOpen),
             (setup_in_game_menu, release_cursor),
         )
-        .add_systems(FixedUpdate, hover.run_if(in_state(AppState::InGame)))
+        .add_systems(
+            FixedUpdate,
+            (hover, hold_position).run_if(in_state(AppState::InGame)),
+        )
         .add_systems(
             Update,
             (
