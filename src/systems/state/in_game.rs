@@ -12,6 +12,15 @@ pub fn setup_in_game(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
+    // Camera
+    commands.spawn((
+        StateScoped(AppState::InGame),
+        Camera3dBundle {
+            transform: Transform::from_xyz(0.0, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_DISTANCE),
+            ..default()
+        },
+    ));
+
     // Light
     commands.spawn((
         StateScoped(AppState::InGame),
@@ -60,15 +69,6 @@ pub fn setup_in_game(
                 transform: Transform::from_xyz(0.0, 1.5, 0.0),
                 ..default()
             },
-            ..default()
-        },
-    ));
-
-    // Camera
-    commands.spawn((
-        StateScoped(AppState::InGame),
-        Camera3dBundle {
-            transform: Transform::from_xyz(0.0, CAMERA_FOLLOW_HEIGHT, CAMERA_FOLLOW_DISTANCE),
             ..default()
         },
     ));

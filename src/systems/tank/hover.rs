@@ -28,23 +28,12 @@ pub fn hover(
             continue;
         }
 
-        if velocity.y >= hover.max_hover_speed {
-            continue;
-        }
-
-        let hover_strength = if hit.time_of_impact > hover.target_height
-            && hit.time_of_impact < hover.braking_height
-        {
-            (hover.braking_height / hit.time_of_impact).min(hover.max_brake_strength)
-        } else {
-            (hover.target_height / hit.time_of_impact).min(hover.max_hover_strength)
-        };
-
         let gravity_force = mass.0 * gravity.0;
-
+        let hover_strength = hover.target_height / hit.time_of_impact;
         let hover_force = -gravity_force * hover_strength;
+        let damping_force = -velocity.0 * mass.0;
 
-        force.apply_force(hover_force);
+        force.apply_force(hover_force + damping_force);
 
         // Apply downward force on anything below the hovering entity.
         // We will model the force as proportional to the square of the distance

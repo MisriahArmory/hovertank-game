@@ -13,8 +13,6 @@ pub struct Hover {
     pub max_hover_strength: f32,
     /// Scalar value to multiply the necessary force to approach its target height
     pub max_brake_strength: f32,
-    /// Maximum speed to return to the target height
-    pub max_hover_speed: f32,
 }
 
 impl Default for Hover {
@@ -24,7 +22,6 @@ impl Default for Hover {
             braking_height: 3.0,
             max_hover_strength: 2.0,
             max_brake_strength: 0.5,
-            max_hover_speed: 0.25,
         }
     }
 }

@@ -1,8 +1,8 @@
-use crate::states::in_game::InGame;
+use crate::states::app::AppState;
 use bevy::prelude::*;
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, SubStates)]
-#[source(InGame = InGame::Running)]
+#[source(AppState = AppState::InGame)]
 pub enum CameraMode {
     FirstPerson,
     #[default]
