@@ -12,6 +12,7 @@ use crate::{
         hover::hover,
         in_game::{in_game, setup_in_game},
         in_game_menu::{setup_in_game_menu, toggle_in_game_menu},
+        neutralize_roll::neutralize_roll,
         rotate_local_player::rotate_local_player,
         sets::ControlSet,
         third_person_camera::third_person_camera,
@@ -29,7 +30,8 @@ pub fn in_game_plugin(app: &mut App) {
         .add_systems(
             FixedUpdate,
             (
-                (hover, dampen_movement, dampen_rotation).run_if(in_state(AppState::InGame)),
+                (hover, dampen_movement, dampen_rotation, neutralize_roll)
+                    .run_if(in_state(AppState::InGame)),
                 rotate_local_player
                     .after(ControlSet)
                     .run_if(in_state(CameraMode::ThirdPerson)),

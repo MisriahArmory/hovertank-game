@@ -17,6 +17,7 @@ pub use state::splash;
 pub use tank::dampen_movement;
 pub use tank::dampen_rotation;
 pub use tank::hover;
+pub use tank::neutralize_roll;
 pub use tank::rotate_local_player;
 pub use ui::cursor;
 pub use ui::in_game_menu;
