@@ -42,7 +42,7 @@ impl Default for TankBundle {
                 right_move_strength: 4.0,
             },
             neutralize_roll: NeutralizeRoll {
-                strength: Vec3::new(1.0, 1.0, 1.0) * 4.0,
+                strength: Vec3::new(1.0, 1.0, 1.0) * 12.0,
             },
             ray_caster: RayCaster::new(Vec3::ZERO, Dir3::NEG_Y).with_max_hits(1),
             rigid_body: RigidBody::Dynamic,

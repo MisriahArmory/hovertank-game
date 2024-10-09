@@ -5,10 +5,10 @@ edition = "2021"
 rust-version = "1.80.1"
 
 [dependencies]
-bevy = {version = "^0.14.1", features = ["dynamic_linking", "wayland"]}
+bevy = {version = "^0.14.2", features = ["dynamic_linking", "wayland"]}
 bevy_asset_loader = "^0.21.0"
-leafwing-input-manager = "^0.15.0"
-bevy_diagnostic = "^0.14.1"
+leafwing-input-manager = "^0.15.1"
+bevy_diagnostic = "^0.14.2"
 avian3d = "^0.1.2"
 
 [profile.dev]

@@ -8,7 +8,9 @@ use crate::{
     },
     states::{camera_mode::CameraMode, in_game::InGame},
     systems::{
-        movement_control::movement_control, rotation_control::rotation_control, sets::ControlSet,
+        movement_control::movement_control,
+        rotate_local_player_first_person::rotate_local_player_first_person,
+        rotation_control::rotation_control, sets::ControlSet,
     },
 };
 
@@ -22,6 +24,7 @@ pub fn control_plugin(app: &mut App) {
             (
                 movement_control,
                 rotation_control::<Camera>.run_if(in_state(CameraMode::ThirdPerson)),
+                rotate_local_player_first_person.run_if(in_state(CameraMode::FirstPerson)),
             )
                 .in_set(ControlSet),
         )

@@ -27,32 +27,26 @@ pub fn rotation_control<Tag: Component>(
         last_input.time = time.elapsed_seconds_f64();
     }
 
-    let yaw_rotor = match ax_data.x {
-        0.0.. => Rotor3::from_rotation_arc(Vec3::X, Vec3::Z),
-        ..0.0 => Rotor3::from_rotation_arc(Vec3::Z, Vec3::X),
-        _ => Rotor3::IDENTITY,
-    };
-    let yaw_speed = ax_data.x.abs() * CAMERA_MAX_YAW_SPEED;
+    let yaw_rotor = Rotor3::from_axis_angle(Vec3::Y, -ax_data.x * CAMERA_MAX_YAW_SPEED);
     let yaw_target = (yaw_rotor * tag_transform.rotation).normalize();
     tag_transform
         .rotation
-        .smooth_nudge(&yaw_target, yaw_speed, time.delta_seconds());
+        .smooth_nudge(&yaw_target, 1.5, time.delta_seconds());
 
-    let forward = tag_transform.forward().into();
-    let up = tag_transform.up().into();
-    let pitch_rotor = match ax_data.y {
-        0.0.. => Rotor3::from_rotation_arc(up, forward),
-        ..0.0 => Rotor3::from_rotation_arc(forward, up),
-        _ => Rotor3::IDENTITY,
-    };
+    let right = tag_transform.right();
+    let right_xz = Vec3::new(right.x, 0.0, right.z);
+    let pitch_rotor = Rotor3::from_axis_angle(right_xz, -ax_data.y * CAMERA_MAX_PITCH_SPEED);
 
-    let mut y = ax_data.y;
     let pitch_target = (pitch_rotor * tag_transform.rotation).normalize();
-    let pitch_speed = y.abs() * CAMERA_MAX_PITCH_SPEED;
     let current_rotation = tag_transform.rotation;
+    let current_forward = tag_transform.forward();
+    let current_forward_xz = Vec3::new(current_forward.x, 0.0, current_forward.z);
+    let current_pitch =
+        current_forward.angle_between(current_forward_xz) * current_forward.y.signum();
+
     tag_transform
         .rotation
-        .smooth_nudge(&pitch_target, pitch_speed, time.delta_seconds());
+        .smooth_nudge(&pitch_target, 1.5, time.delta_seconds());
 
     let forward = tag_transform.forward();
     let forward_xz = Vec3::new(forward.x, 0.0, forward.z);
@@ -64,21 +58,19 @@ pub fn rotation_control<Tag: Component>(
     if time_since_last_input > CAMERA_COMFORT_ZONE_TIME
         && !(CAMERA_COMFORT_ZONE_MIN_PITCH..=CAMERA_COMFORT_ZONE_MAX_PITCH).contains(&pitch)
     {
-        y = CAMERA_COMFORT_ZONE_ADJUSTMENT_SPEED * pitch.signum();
-        let forward = tag_transform.forward().into();
-        let pitch_rotor = match y {
-            0.0.. => Rotor3::from_rotation_arc(up, forward),
-            ..0.0 => Rotor3::from_rotation_arc(forward, up),
-            _ => Rotor3::IDENTITY,
-        };
+        let y = CAMERA_COMFORT_ZONE_ADJUSTMENT_SPEED * pitch.signum() * CAMERA_MAX_PITCH_SPEED;
+        let right = tag_transform.right();
+        let right_xz = Vec3::new(right.x, 0.0, right.z);
+        let pitch_rotor = Rotor3::from_axis_angle(right_xz, -y);
         let pitch_target = (pitch_rotor * tag_transform.rotation).normalize();
-        let pitch_speed = y.abs() * CAMERA_MAX_PITCH_SPEED;
         tag_transform
             .rotation
-            .smooth_nudge(&pitch_target, pitch_speed, time.delta_seconds());
+            .smooth_nudge(&pitch_target, 1.0, time.delta_seconds());
     }
 
-    if !(CAMERA_MIN_PITCH..=CAMERA_MAX_PITCH).contains(&pitch) {
+    if (pitch > CAMERA_MAX_PITCH && pitch > current_pitch)
+        || (pitch < CAMERA_MIN_PITCH && pitch < current_pitch)
+    {
         tag_transform.rotation = current_rotation;
     }
 }

@@ -13,7 +13,7 @@ use crate::{
         in_game::{in_game, setup_in_game},
         in_game_menu::{setup_in_game_menu, toggle_in_game_menu},
         neutralize_roll::neutralize_roll,
-        rotate_local_player::rotate_local_player,
+        rotate_local_player_third_person::rotate_local_player_third_person,
         sets::ControlSet,
         third_person_camera::third_person_camera,
     },
@@ -32,7 +32,7 @@ pub fn in_game_plugin(app: &mut App) {
             (
                 (hover, dampen_movement, dampen_rotation, neutralize_roll)
                     .run_if(in_state(AppState::InGame)),
-                rotate_local_player
+                rotate_local_player_third_person
                     .after(ControlSet)
                     .run_if(in_state(CameraMode::ThirdPerson)),
             ),

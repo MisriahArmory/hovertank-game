@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use crate::components::{LocalPlayer, RotationProperties};
 
 /// Rotate the player model to align with the third person camera
-pub fn rotate_local_player(
+pub fn rotate_local_player_third_person(
     mut set: ParamSet<(
         Query<
             (
