@@ -9,6 +9,7 @@ use crate::{
     },
     key_mappings::rotation::RotationAction,
     traits::{Orbit, StableInterpolate},
+    Rotor3,
 };
 
 pub fn third_person_camera(
@@ -31,6 +32,13 @@ pub fn third_person_camera(
 
     let mut camera_transform_query = set.p0();
     let mut camera_transform = camera_transform_query.single_mut();
+
+    // Neutralize any camera roll
+    let right = camera_transform.right();
+    let right_xz = Vec3::new(right.x, 0.0, right.z);
+    let neutralize_roll_rotor = Rotor3::from_rotation_arc(right.into(), right_xz);
+    camera_transform.rotation *= neutralize_roll_rotor;
+
     let relative_offset_translation = target_offset - camera_transform.translation;
     let relative_offset_translation_direction = relative_offset_translation.normalize();
 

@@ -1,3 +1,4 @@
+use avian3d::prelude::{AngularVelocity, Inertia, LinearVelocity, Mass};
 use bevy::prelude::*;
 
 use crate::{constants::orbit::ORBIT_ANGLE_EPS, Rotor3};
@@ -84,5 +85,25 @@ impl Orbit for Vec3 {
 
         let orbit_translation = orbit_rotor.mul_vec3(relative_translation);
         other - orbit_translation
+    }
+}
+
+pub trait Dampen<T> {
+    type Output;
+    /// Computes the dampening term for a kind of motion
+    fn dampen(&self, inertia: &T, strength: Vec3) -> Self::Output;
+}
+
+impl Dampen<Inertia> for AngularVelocity {
+    type Output = Vec3;
+    fn dampen(&self, inertia: &Inertia, strength: Vec3) -> Self::Output {
+        inertia.mul_vec3(-self.0) * strength
+    }
+}
+
+impl Dampen<Mass> for LinearVelocity {
+    type Output = Vec3;
+    fn dampen(&self, inertia: &Mass, strength: Vec3) -> Self::Output {
+        inertia.0 * -self.0 * strength
     }
 }
